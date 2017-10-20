@@ -85,9 +85,11 @@ graphql(schema, `
   });
 ```
 
-You can provide a `notFoundValue`, which will override the default internal notFoundValue of that type or null.
 
 ## Advanced Usage
+
+You can also provide a `notFoundValue`, which will override the default internal notFoundValue of that type or null.
+
 ```js
 ...
 
