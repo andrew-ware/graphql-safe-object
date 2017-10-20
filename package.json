@@ -1,0 +1,34 @@
+{
+  "name": "graphql-safe-object",
+  "version": "0.0.1",
+  "description": "GraphQLSafeObjectType for GraphQL.js",
+  "files": [
+    "lib"
+  ],
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "rimraf lib && babel src -d lib",
+    "prepublish": "npm run build",
+    "test": "mocha --compilers js:babel-register test",
+    "test:watch": "mocha --watch --compilers js:babel-register test"
+  },
+  "keywords": [
+    "graphQL"
+  ],
+  "author": "Andrew Ware",
+  "license": "MIT",
+  "peerDependencies": {
+    "graphql": ">=0.4.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "chai": "^4.1.2",
+    "graphql": "^0.10.5",
+    "lodash": "^4.17.4",
+    "mocha": "^4.0.1",
+    "rimraf": "^2.6.1"
+  }
+}
