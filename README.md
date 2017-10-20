@@ -81,6 +81,6 @@ graphql(schema, `
      * }
      */
      
-    doSomething(user.location.contact.name); // won't throw an error
+    doSomething(user.location.contact.name); // won't cause an exception
   });
 ```
