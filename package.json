@@ -15,10 +15,12 @@
   "peerDependencies": {
     "graphql": ">=0.4.0"
   },
+  "dependencies": {
+    "lodash": "^4.17.4"
+  },
   "devDependencies": {
     "chai": "^4.1.2",
     "graphql": "^0.10.5",
-    "lodash": "^4.17.4",
     "mocha": "^4.0.1"
   }
 }
