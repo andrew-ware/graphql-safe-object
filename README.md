@@ -18,8 +18,7 @@ const safeObject = new GraphQLSafeObjectType({
   name: 'SafeObject',
   fields: {
     username: {
-      type: GraphQLString,
-      notFoundValue: 'unknown'
+      type: GraphQLString
     },
     location: {
       type: new GraphQLSafeObjectType({
@@ -81,14 +80,14 @@ graphql(schema, `
      * }
      */
      
-    doSomething(user.location.contact.name); // won't cause an exception
+    doSomething(user.location.contact.name); // won't throw an exception
   });
 ```
 
 
-## Advanced Usage
+## Additional Options
 
-You can also provide a `notFoundValue`, which will override the default internal notFoundValue of that type or null.
+Providing a `notFoundValue` will override the default internal notFoundValue of that type.
 
 ```js
 ...

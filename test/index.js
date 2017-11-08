@@ -14,7 +14,7 @@ describe('GraphQLSafeObjectType', () => {
             args: {
               id: { type: GraphQLInt }
             },
-            resolve: (obj, { id }) => data[id]
+            resolve: () => data
           }
         }
       })
@@ -22,9 +22,7 @@ describe('GraphQLSafeObjectType', () => {
   }
 
   it('acts as normal GraphQLObjectType if value found', done => {
-    const data = {
-      1: { username: 'foobar' }
-    };
+    const data = { username: 'foobar' };
 
     const safeObject = new GraphQLSafeObjectType({
       name: 'SafeObject',
@@ -42,9 +40,13 @@ describe('GraphQLSafeObjectType', () => {
       username: 'foobar'
     };
 
-    graphql(schema, `query ($id: ${GraphQLInt}) { user(id: $id) { username } }`, null, null, {
-      id: 1
-    })
+    const query = `
+      query {
+        user { username }
+      }
+    `;
+
+    graphql(schema, query)
       .then(({ data }) => {
         expect(data.user).to.eql(expected);
         done();
@@ -53,9 +55,7 @@ describe('GraphQLSafeObjectType', () => {
   });
 
   it('returns null if value not found and notFoundValue not supplied', done => {
-    const data = {
-      1: { name: 'Foo' }
-    };
+    const data = { name: 'Foo' };
 
     const safeObject = new GraphQLSafeObjectType({
       name: 'SafeObject',
@@ -72,9 +72,13 @@ describe('GraphQLSafeObjectType', () => {
       username: null
     };
 
-    graphql(schema, `query ($id: ${GraphQLInt}) { user(id: $id) { username } }`, null, null, {
-      id: 1
-    })
+    const query = `
+      query {
+        user { username }
+      }
+    `;
+
+    graphql(schema, query)
       .then(({ data }) => {
         expect(data.user).to.eql(expected);
         done();
@@ -82,10 +86,8 @@ describe('GraphQLSafeObjectType', () => {
       .catch(done);
   });
 
-  it('returns notFoundValue [if supplied] if value found', done => {
-    const data = {
-      1: { name: 'Foo' }
-    };
+  it('returns notFoundValue [if supplied] if value not found', done => {
+    const data = { name: 'Foo' };
 
     const safeObject = new GraphQLSafeObjectType({
       name: 'SafeObject',
@@ -103,9 +105,13 @@ describe('GraphQLSafeObjectType', () => {
       username: 'unknown'
     };
 
-    graphql(schema, `query ($id: ${GraphQLInt}) { user(id: $id) { username } }`, null, null, {
-      id: 1
-    })
+    const query = `
+      query {
+        user { username }
+      }
+    `;
+
+    graphql(schema, query)
       .then(({ data }) => {
         expect(data.user).to.eql(expected);
         done();
@@ -115,14 +121,12 @@ describe('GraphQLSafeObjectType', () => {
 
   it('acts as normal GraphQLObjectType with nested objects when values found', done => {
     const data = {
-      1: {
-        username: 'foobar',
-        location: {
-          city: 'Boston',
-          state: 'MA',
-          contact: {
-            name: 'John'
-          }
+      username: 'foobar',
+      location: {
+        city: 'Boston',
+        state: 'MA',
+        contact: {
+          name: 'John'
         }
       }
     };
@@ -167,15 +171,20 @@ describe('GraphQLSafeObjectType', () => {
       }
     };
 
-    graphql(
-      schema,
-      `query ($id: ${GraphQLInt}) { user(id: $id) { username, location { city, state, contact { name } }  } }`,
-      null,
-      null,
-      {
-        id: 1
+    const query = `
+      query {
+        user {
+          username,
+          location {
+            city,
+            state,
+            contact { name }
+          }
+        }
       }
-    )
+    `;
+
+    graphql(schema, query)
       .then(({ data }) => {
         expect(data.user).to.eql(expected);
         done();
@@ -184,11 +193,7 @@ describe('GraphQLSafeObjectType', () => {
   });
 
   it('returns empty nested objects with children when parent value not found', done => {
-    const data = {
-      1: {
-        username: 'foobar'
-      }
-    };
+    const data = { username: 'foobar' };
 
     const safeObject = new GraphQLSafeObjectType({
       name: 'SafeObject',
@@ -230,15 +235,20 @@ describe('GraphQLSafeObjectType', () => {
       }
     };
 
-    graphql(
-      schema,
-      `query ($id: ${GraphQLInt}) { user(id: $id) { username, location { city, state, contact { name } }  } }`,
-      null,
-      null,
-      {
-        id: 1
+    const query = `
+      query {
+        user {
+          username,
+          location {
+            city,
+            state,
+            contact { name }
+          }
+        }
       }
-    )
+    `;
+
+    graphql(schema, query)
       .then(({ data }) => {
         expect(data.user).to.eql(expected);
         done();
@@ -248,25 +258,23 @@ describe('GraphQLSafeObjectType', () => {
 
   it('acts as normal GraphQLObjectType with nested GraphQLList when value found', done => {
     const data = {
-      1: {
-        username: 'foobar',
-        locations: [
-          {
-            city: 'Boston',
-            state: 'MA',
-            contact: {
-              name: 'John'
-            }
-          },
-          {
-            city: 'Denver',
-            state: 'CO',
-            contact: {
-              name: 'Jane'
-            }
+      username: 'foobar',
+      locations: [
+        {
+          city: 'Boston',
+          state: 'MA',
+          contact: {
+            name: 'John'
           }
-        ]
-      }
+        },
+        {
+          city: 'Denver',
+          state: 'CO',
+          contact: {
+            name: 'Jane'
+          }
+        }
+      ]
     };
 
     const safeObject = new GraphQLSafeObjectType({
@@ -319,15 +327,20 @@ describe('GraphQLSafeObjectType', () => {
       ]
     };
 
-    graphql(
-      schema,
-      `query ($id: ${GraphQLInt}) { user(id: $id) { username, locations { city, state, contact { name } }  } }`,
-      null,
-      null,
-      {
-        id: 1
+    const query = `
+      query {
+        user {
+          username,
+          locations {
+            city,
+            state,
+            contact { name }
+          }
+        }
       }
-    )
+    `;
+
+    graphql(schema, query)
       .then(({ data }) => {
         expect(data.user).to.eql(expected);
         done();
@@ -337,9 +350,14 @@ describe('GraphQLSafeObjectType', () => {
 
   it('returns empty nested objects and lists with children when parent value not found', done => {
     const data = {
-      1: {
-        username: 'foobar'
-      }
+      username: 'foobar',
+      locations: [
+        {
+          contact: {
+            name: 'John'
+          }
+        }
+      ]
     };
 
     const safeObject = new GraphQLSafeObjectType({
@@ -380,21 +398,26 @@ describe('GraphQLSafeObjectType', () => {
           city: null,
           state: null,
           contact: {
-            name: null
+            name: 'John'
           }
         }
       ]
     };
 
-    graphql(
-      schema,
-      `query ($id: ${GraphQLInt}) { user(id: $id) { username, locations { city, state, contact { name } }  } }`,
-      null,
-      null,
-      {
-        id: 1
+    const query = `
+      query {
+        user {
+          username,
+          locations {
+            city,
+            state,
+            contact { name }
+          }
+        }
       }
-    )
+    `;
+
+    graphql(schema, query)
       .then(({ data }) => {
         expect(data.user).to.eql(expected);
         done();
@@ -402,12 +425,8 @@ describe('GraphQLSafeObjectType', () => {
       .catch(done);
   });
 
-  it('returns notFoundValue [if supplied] in place of nested child object/list', done => {
-    const data = {
-      1: {
-        username: 'foobar'
-      }
-    };
+  it('returns empty list if no elements found in GraphQLList type', done => {
+    const data = { username: 'foobar' };
 
     const safeObject = new GraphQLSafeObjectType({
       name: 'SafeObject',
@@ -432,8 +451,7 @@ describe('GraphQLSafeObjectType', () => {
                 }
               }
             })
-          ),
-          notFoundValue: []
+          )
         }
       }
     });
@@ -445,15 +463,20 @@ describe('GraphQLSafeObjectType', () => {
       locations: []
     };
 
-    graphql(
-      schema,
-      `query ($id: ${GraphQLInt}) { user(id: $id) { username, locations { city, state, contact { name } }  } }`,
-      null,
-      null,
-      {
-        id: 1
+    const query = `
+      query {
+        user {
+          username,
+          locations {
+            city,
+            state,
+            contact { name }
+          }
+        }
       }
-    )
+    `;
+
+    graphql(schema, query)
       .then(({ data }) => {
         expect(data.user).to.eql(expected);
         done();

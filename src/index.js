@@ -8,12 +8,8 @@ function getDefaultNotFoundValueByType(type) {
     case isOfType('SafeObject'): {
       return {};
     }
-    case isOfType('SafeObject]'): {
-      // List of SafeObjects
-      return [{}];
-    }
     case isOfType(']'): {
-      // List of other type
+      // List type
       return [];
     }
     default: {
